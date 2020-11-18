@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+	   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+       <script type="text/javascript">
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
+var d1=moment('2017-02-19');
+var d2=moment('2018-05-18');
+var d3=moment('2019-03-20');
+var graphData = [[1485878400000+3600*24*1000*2,260],[1486137600000,200],[1486569600000,279],
+[1486915200000,-847],[1487347200000,241],[1487779200000+3600*24*1000*15,411],
+[1488124800000+3600*24*1000*23,985]];
+
+graphData= [[parseInt(d1.format('x')), 50],[parseInt(d2.format('x')), 150],
+[parseInt(d3.format('x')), 250]];
+var links = graphData.map(function (item, idx) {
+    return {
+        source: idx,
+        target: idx + 1
+    };
+});
+graphData1=[[parseInt(d1.format('x')), 50],[parseInt(moment('2017-12-31').format('x')),100]];
+graphData2=[[parseInt(moment('2018-01-01').format('x')),100],[parseInt(d2.format('x')), 50],[parseInt(moment('2018-12-31').format('x')),100]];
+graphData3=[[parseInt(moment('2019-01-01').format('x')),100],[parseInt(d3.format('x')), 50]];
+links.pop();
+
+function getVirtulData1(fD, tD) {
+    let data = [];
+    for (var time = fD; time.isBefore(tD) || time==tD ; time=time.add(1, 'day')){
+        data.push([
+            time.format('YYYY-MM-DD'),
+            (time.day()+1)*100
+        ]);
+    }
+    return data;
+}
+
+option = {
+    tooltip: {},
+    calendar: [
+        {
+        top:'middle',
+        left: '10%',
+        orient: 'vertical',
+        cellSize: 15,
+        yearLabel: {
+            margin: 20,
+            textStyle: {
+                fontSize: 30
+            }
+        },
+        dayLabel: {
+            firstDay: 1,
+            nameMap: 'en'
+        },
+        monthLabel: {
+            nameMap: 'en',
+            margin: 15,
+            textStyle: {
+                fontSize: 20,
+                color: '#999'
+            }
+        },
+        range: [d1.format('YYYY-MM-DD'), '2017-12-31']
+        },
+        {
+        top:'middle',
+        left: '30%',
+        orient: 'vertical',
+        cellSize: 15,
+        yearLabel: {
+            margin: 20,
+            textStyle: {
+                fontSize: 30
+            }
+        },
+        dayLabel: {
+            firstDay: 1,
+            nameMap: 'en'
+        },
+        monthLabel: {
+            nameMap: 'en',
+            margin: 15,
+            textStyle: {
+                fontSize: 20,
+                color: '#999'
+            }
+        },
+        range: ['2018-01-01', '2018-12-31']
+        },
+        {
+        top:'middle',
+        left: '60%',
+        orient: 'vertical',
+        cellSize: 15,
+        yearLabel: {
+            margin: 20,
+            textStyle: {
+                fontSize: 30
+            }
+        },
+        dayLabel: {
+            firstDay: 1,
+            nameMap: 'en'
+        },
+        monthLabel: {
+            nameMap: 'en',
+            margin: 15,
+            textStyle: {
+                fontSize: 20,
+                color: '#999'
+            }
+        },
+        range: ['2019-01-01', d3.format('YYYY-MM-DD')]
+        }],
+    visualMap: {
+        min: 0,
+        max: 800,
+        type: 'piecewise',
+        left: 'center',
+        bottom: 20,
+        inRange: {
+            color: ['#5291FF', '#C7DBFF']
+        },
+        seriesIndex: [3, 4,5],
+        orient: 'horizontal'
+    },
+    series: [{
+        type: 'graph',
+        edgeSymbol: ['none', 'arrow'],
+        coordinateSystem: 'calendar',
+        links: links,
+        symbolSize: 15,
+        calendarIndex: 0,
+        itemSymbol:'diamond',
+        itemStyle: {
+            color: 'yellow',
+            shadowBlue: 9,
+            shadowOffsetX: 1.5,
+            shadowOffsetY: 3,
+            shadowColor: '#555'
+        },
+        lineStyle: {
+            color: '#D10E00',
+            width: 1,
+            opacity: 1
+        },
+        data: graphData1,
+        z: 20
+    },
+    {
+        type: 'graph',
+        edgeSymbol: ['none', 'arrow'],
+        coordinateSystem: 'calendar',
+        links: links,
+        symbolSize: 15,
+        calendarIndex: 1,
+        itemStyle: {
+            color: 'yellow',
+            shadowBlue: 9,
+            shadowOffsetX: 1.5,
+            shadowOffsetY: 3,
+            shadowColor: '#555'
+        },
+        lineStyle: {
+            color: '#D10E00',
+            width: 1,
+            opacity: 1
+        },
+        data: graphData2,
+        z: 20
+    },
+    {
+        type: 'graph',
+        edgeSymbol: ['none', 'arrow'],
+        coordinateSystem: 'calendar',
+        links: links,
+        symbolSize: 15,
+        calendarIndex: 2,
+        itemStyle: {
+            color: 'yellow',
+            shadowBlue: 9,
+            shadowOffsetX: 1.5,
+            shadowOffsetY: 3,
+            shadowColor: '#555'
+        },
+        lineStyle: {
+            color: '#D10E00',
+            width: 1,
+            opacity: 1
+        },
+        data: graphData3,
+        z: 20
+    }, {
+        type: 'heatmap',
+        coordinateSystem: 'calendar',
+        calendarIndex: 0,
+        data: getVirtulData1(moment('2017-01-01'),moment('2018-01-01'))
+    },
+    {
+        type: 'heatmap',
+        coordinateSystem: 'calendar',
+        calendarIndex: 1,
+        data: getVirtulData1(moment('2018-01-01'),moment('2019-01-01'))
+    },
+    {
+        type: 'heatmap',
+        coordinateSystem: 'calendar',
+        calendarIndex: 2,
+        data: getVirtulData1(moment('2019-01-01'),d3)
+    }]
+};
+
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+       </script>
+   </body>
+</html>
